@@ -1,26 +1,580 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f7fb;
+  --foreground: #172033;
+  --muted: #627086;
+  --panel: #ffffff;
+  --panel-soft: #eef3f8;
+  --line: #d9e1ec;
+  --ink: #101828;
+  --blue: #2457d6;
+  --blue-dark: #173ea7;
+  --green: #0f8f5f;
+  --amber: #b86e00;
+  --red: #b42318;
+  --shadow: 0 18px 50px rgba(31, 43, 68, 0.12);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
 }
 
 body {
-  background: var(--background);
+  min-width: 320px;
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(36, 87, 214, 0.07), transparent 360px),
+    var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 304px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  height: 100vh;
+  padding: 24px;
+  border-right: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  border: 1px solid #b9c9f8;
+  border-radius: 8px;
+  background: #e8eefc;
+  color: var(--blue);
+}
+
+.brand h1,
+.topbar h2,
+.lesson-heading h3,
+.practice-header h3 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.brand h1 {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.eyebrow {
+  margin: 0 0 5px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+}
+
+.search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--foreground);
+}
+
+.lesson-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.lesson-group p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.empty-state {
+  margin: 4px 0 0;
+  padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.lesson-link {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 7px;
+  padding: 9px 11px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--foreground);
+  text-align: left;
+}
+
+.lesson-link span {
+  overflow-wrap: anywhere;
+}
+
+.lesson-link:hover {
+  background: var(--panel-soft);
+}
+
+.lesson-link.active {
+  border-color: #b9c9f8;
+  background: #e8eefc;
+  color: var(--blue-dark);
+  font-weight: 800;
+}
+
+.done-icon {
+  color: var(--green);
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.topbar h2 {
+  max-width: 760px;
+  color: var(--ink);
+  font-size: 34px;
+  line-height: 1.08;
+}
+
+.streak,
+.duration,
+.expected,
+.goal,
+.result {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.streak {
+  min-height: 40px;
+  padding: 9px 13px;
+  border: 1px solid #f3cf8b;
+  border-radius: 8px;
+  background: #fff6e6;
+  color: var(--amber);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metric {
+  min-height: 104px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 10px 28px rgba(31, 43, 68, 0.07);
+}
+
+.metric svg {
+  color: var(--blue);
+}
+
+.metric span {
+  display: block;
+  margin-top: 12px;
+  color: var(--ink);
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.metric p {
+  margin: 5px 0 0;
+  color: var(--muted);
+}
+
+.lesson-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.88fr) minmax(420px, 1.12fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.lesson-panel,
+.practice-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.lesson-panel {
+  padding: 24px;
+}
+
+.practice-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+.lesson-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.lesson-heading h3,
+.practice-header h3 {
+  color: var(--ink);
+  font-size: 26px;
+  line-height: 1.15;
+}
+
+.lesson-heading p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.level-pill {
+  display: inline-flex;
+  min-height: 28px;
+  margin-bottom: 12px;
+  padding: 5px 10px;
+  border: 1px solid #b9d8c8;
+  border-radius: 999px;
+  background: #e9f8f0;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.duration {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 26px 0 22px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.tab.active {
+  background: var(--panel);
+  color: var(--blue);
+  box-shadow: 0 5px 18px rgba(31, 43, 68, 0.08);
+}
+
+.theory {
+  margin: 0;
+  color: #334155;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.goal-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.snippet-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.snippet {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid #c5d5ff;
+  border-radius: 8px;
+  background: #f4f7ff;
+  color: var(--blue-dark);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.goal {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #d5eadf;
+  border-radius: 8px;
+  background: #f4fbf7;
+  color: #164c36;
+  font-weight: 700;
+}
+
+.practice-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.expected {
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 170px;
+  padding: 10px 12px;
+  border: 1px solid #c5d5ff;
+  border-radius: 8px;
+  background: #f4f7ff;
+}
+
+.expected span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.expected code {
+  color: var(--blue-dark);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.code-editor {
+  flex: 1;
+  width: 100%;
+  min-height: 310px;
+  resize: vertical;
+  padding: 22px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  outline: 0;
+  background: #111827;
+  color: #e5e7eb;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 15px;
+  line-height: 1.7;
+  tab-size: 2;
+}
+
+.practice-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 18px;
+  background: #f8fafc;
+}
+
+.primary-action,
+.secondary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 15px;
+  border-radius: 8px;
+  font-weight: 900;
+}
+
+.primary-action {
+  border: 1px solid var(--blue-dark);
+  background: var(--blue);
+  color: white;
+}
+
+.primary-action:hover {
+  background: var(--blue-dark);
+}
+
+.secondary-action {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--foreground);
+}
+
+.secondary-action:hover {
+  background: var(--panel-soft);
+}
+
+.result {
+  min-height: 54px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.result.success {
+  background: #eefaf3;
+  color: var(--green);
+}
+
+.result.warning {
+  background: #fff6e6;
+  color: var(--amber);
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lesson-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .lesson-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .workspace,
+  .sidebar {
+    padding: 18px;
+  }
+
+  .topbar,
+  .lesson-heading,
+  .practice-header {
+    flex-direction: column;
+  }
+
+  .topbar h2 {
+    font-size: 28px;
+  }
+
+  .stats-grid,
+  .lesson-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .practice-actions {
+    flex-direction: column-reverse;
+  }
+
+  .primary-action,
+  .secondary-action {
+    width: 100%;
+  }
 }
