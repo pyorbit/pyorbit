@@ -6,14 +6,10 @@ import {
   Circle,
   Clock3,
   Code2,
-  Flame,
-  ListChecks,
-  Play,
   RotateCcw,
   Search,
   Target,
   Terminal,
-  Trophy,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -44,8 +40,7 @@ const lessons: Lesson[] = [
     goals: ["Создать переменные", "Использовать print", "Собрать строку с f-string"],
     theory:
       "Переменная хранит значение под понятным именем. В Python не нужно указывать тип заранее: интерпретатор сам понимает, что в переменной лежит строка, число или другой объект.",
-    starterCode:
-      'name = "Аня"\nage = 14\n\n# Выведи: Аня изучает Python, ей 14\nprint()',
+    starterCode: 'name = "Аня"\nage = 14\n\n# Выведи: Аня изучает Python, ей 14\nprint()',
     expectedOutput: "Аня изучает Python, ей 14",
     requiredSnippets: ["name", "age", "print", "f"],
   },
@@ -90,13 +85,11 @@ const lessons: Lesson[] = [
     theory:
       "Функция превращает несколько строк кода в переиспользуемое действие. Хорошая функция делает одну понятную вещь и возвращает результат через return.",
     starterCode:
-      '# Напиши функцию discount(price), которая возвращает цену со скидкой 10%\n# Для 1000 нужно вывести 900\n',
+      "# Напиши функцию discount(price), которая возвращает цену со скидкой 10%\n# Для 1000 нужно вывести 900\n",
     expectedOutput: "900",
     requiredSnippets: ["def", "return", "discount", "print"],
   },
 ];
-
-const starterCompleted = new Set(["variables"]);
 
 function normalize(value: string) {
   return value.trim().replace(/\s+/g, " ").toLowerCase();
@@ -106,19 +99,10 @@ export default function Home() {
   const [activeLessonId, setActiveLessonId] = useState(lessons[0].id);
   const [activeTab, setActiveTab] = useState<LessonTab>("theory");
   const [searchQuery, setSearchQuery] = useState("");
-  const [completed, setCompleted] = useState<Set<string>>(starterCompleted);
   const [answers, setAnswers] = useState<Record<string, string>>(() =>
     Object.fromEntries(lessons.map((lesson) => [lesson.id, lesson.starterCode])),
   );
-  const [result, setResult] = useState<{
-    lessonId: string;
-    status: "idle" | "success" | "warning";
-    message: string;
-  }>({
-    lessonId: lessons[0].id,
-    status: "idle",
-    message: "Готово к проверке",
-  });
+  const [message, setMessage] = useState("Черновик сохраняется только до закрытия страницы.");
 
   const activeLesson = useMemo(
     () => lessons.find((lesson) => lesson.id === activeLessonId) ?? lessons[0],
@@ -126,10 +110,6 @@ export default function Home() {
   );
 
   const activeAnswer = answers[activeLesson.id] ?? activeLesson.starterCode;
-  const progress = Math.round((completed.size / lessons.length) * 100);
-  const remainingMinutes = lessons
-    .filter((lesson) => !completed.has(lesson.id))
-    .reduce((sum, lesson) => sum + lesson.minutes, 0);
 
   const filteredLessons = useMemo(() => {
     const query = normalize(searchQuery);
@@ -139,9 +119,7 @@ export default function Home() {
     }
 
     return lessons.filter((lesson) =>
-      normalize(`${lesson.module} ${lesson.title} ${lesson.summary}`).includes(
-        query,
-      ),
+      normalize(`${lesson.module} ${lesson.title} ${lesson.summary}`).includes(query),
     );
   }, [searchQuery]);
 
@@ -156,11 +134,7 @@ export default function Home() {
 
   function updateAnswer(value: string) {
     setAnswers((current) => ({ ...current, [activeLesson.id]: value }));
-    setResult({
-      lessonId: activeLesson.id,
-      status: "idle",
-      message: "Готово к проверке",
-    });
+    setMessage("Черновик сохраняется только до закрытия страницы.");
   }
 
   function resetLesson() {
@@ -168,42 +142,11 @@ export default function Home() {
       ...current,
       [activeLesson.id]: activeLesson.starterCode,
     }));
-    setResult({
-      lessonId: activeLesson.id,
-      status: "idle",
-      message: "Черновик сброшен",
-    });
-  }
-
-  function checkAnswer() {
-    const answer = normalize(activeAnswer);
-    const hasRequiredSyntax = activeLesson.requiredSnippets.every((snippet) =>
-      answer.includes(snippet.toLowerCase()),
-    );
-    const hasExpectedOutput = answer.includes(
-      normalize(activeLesson.expectedOutput),
-    );
-
-    if (hasRequiredSyntax && hasExpectedOutput) {
-      setCompleted((current) => new Set(current).add(activeLesson.id));
-      setResult({
-        lessonId: activeLesson.id,
-        status: "success",
-        message: "Задание принято. Можно переходить дальше.",
-      });
-      return;
-    }
-
-    setResult({
-      lessonId: activeLesson.id,
-      status: "warning",
-      message:
-        "Проверь синтаксис и убедись, что в коде есть ожидаемый вывод.",
-    });
+    setMessage("Черновик сброшен.");
   }
 
   return (
-    <main className="app-shell">
+    <main className="app-shell" lang="ru">
       <aside className="sidebar" aria-label="Учебная навигация">
         <div className="brand">
           <div className="brand-mark">
@@ -231,7 +174,6 @@ export default function Home() {
               <p>{module}</p>
               {moduleLessons.map((lesson) => {
                 const isActive = lesson.id === activeLesson.id;
-                const isDone = completed.has(lesson.id);
 
                 return (
                   <button
@@ -240,62 +182,33 @@ export default function Home() {
                     onClick={() => {
                       setActiveLessonId(lesson.id);
                       setActiveTab("theory");
-                      setResult({
-                        lessonId: lesson.id,
-                        status: "idle",
-                        message: "Готово к проверке",
-                      });
+                      setMessage("Черновик сохраняется только до закрытия страницы.");
                     }}
                     type="button"
                   >
-                    {isDone ? (
-                      <CheckCircle2 className="done-icon" size={18} />
-                    ) : (
-                      <Circle size={18} />
-                    )}
+                    <Circle size={18} />
                     <span>{lesson.title}</span>
                   </button>
                 );
               })}
             </section>
           ))}
-          {filteredLessons.length === 0 ? (
-            <p className="empty-state">Уроки не найдены</p>
-          ) : null}
+          {filteredLessons.length === 0 ? <p className="empty-state">Уроки не найдены</p> : null}
         </nav>
       </aside>
 
       <section className="workspace">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Персональная траектория</p>
+            <p className="eyebrow">Интерактивный макет · код не выполняется</p>
             <h2>От первых переменных до собственных функций</h2>
           </div>
-          <div className="streak">
-            <Flame size={18} />
-            <span>4 дня подряд</span>
-          </div>
+          <div className="streak">Локальный черновик</div>
         </header>
 
-        <section className="stats-grid" aria-label="Прогресс обучения">
-          <div className="metric">
-            <Trophy size={20} />
-            <span>{progress}%</span>
-            <p>пройдено</p>
-          </div>
-          <div className="metric">
-            <ListChecks size={20} />
-            <span>
-              {completed.size}/{lessons.length}
-            </span>
-            <p>уроков</p>
-          </div>
-          <div className="metric">
-            <Clock3 size={20} />
-            <span>{remainingMinutes} мин</span>
-            <p>осталось</p>
-          </div>
-        </section>
+        <p className="preview-notice">
+          Это сохранённый макет старого интерфейса. Редактор не выполняет и не проверяет Python-код.
+        </p>
 
         <section className="lesson-layout">
           <article className="lesson-panel">
@@ -344,9 +257,7 @@ export default function Home() {
               </button>
             </div>
 
-            {activeTab === "theory" ? (
-              <p className="theory">{activeLesson.theory}</p>
-            ) : null}
+            {activeTab === "theory" ? <p className="theory">{activeLesson.theory}</p> : null}
 
             {activeTab === "practice" ? (
               <div className="snippet-list">
@@ -395,27 +306,11 @@ export default function Home() {
                 <RotateCcw size={17} />
                 Сбросить
               </button>
-              <button className="primary-action" onClick={checkAnswer} type="button">
-                <Play size={18} fill="currentColor" />
-                Проверить
-              </button>
             </div>
 
-            <div
-              className={`result ${result.status}`}
-              role="status"
-              aria-live="polite"
-            >
-              {result.status === "success" ? (
-                <CheckCircle2 size={18} />
-              ) : (
-                <Terminal size={18} />
-              )}
-              <span>
-                {result.lessonId === activeLesson.id
-                  ? result.message
-                  : "Готово к проверке"}
-              </span>
+            <div className="result" role="status" aria-live="polite">
+              <Terminal size={18} />
+              <span>{message}</span>
             </div>
           </article>
         </section>
