@@ -1,0 +1,7 @@
+id: python-fundamentals
+slug: python-fundamentals
+title: Python Fundamentals
+description: A small introduction to the building blocks of Python.
+order: 1
+difficulty: beginner
+tags: [python, fundamentals]
