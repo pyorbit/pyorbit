@@ -1,0 +1,46 @@
+{
+  "name": "@pyorbit/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"scripts/**/*.ts\" \"*.{json,mjs,ts}\" \"../../packages/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"scripts/**/*.ts\" \"*.{json,mjs,ts}\" \"../../packages/**/*.{ts,tsx,json}\"",
+    "content:validate": "tsx scripts/validate-content.ts"
+  },
+  "dependencies": {
+    "@pyorbit/types": "*",
+    "@pyorbit/ui": "*",
+    "gray-matter": "^4.0.3",
+    "lucide-react": "^1.17.0",
+    "next": "^16.3.8",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "shiki": "^3.13.0",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.9.9",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.0",
+    "typescript": "^5",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
+  }
+}

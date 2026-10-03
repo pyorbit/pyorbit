@@ -140,3 +140,10 @@ vite.config.ts.timestamp-*
 
 .npmrc
 .env
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.py[cod]

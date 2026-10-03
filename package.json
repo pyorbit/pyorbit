@@ -1,32 +1,16 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "pyorbit",
   "private": true,
+  "workspaces": ["apps/web", "packages/ui", "packages/types", "packages/config"],
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint",
-    "type-check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "lucide-react": "^1.17.0",
-    "next": "^15.5.19",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "^15.5.19",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  },
-  "overrides": {
-    "postcss": "8.5.10"
+    "dev": "npm run dev -w @pyorbit/web",
+    "build": "npm run build -w @pyorbit/web",
+    "lint": "npm run lint -w @pyorbit/web",
+    "typecheck": "npm run typecheck -w @pyorbit/web",
+    "test": "npm run test -w @pyorbit/web",
+    "format:web": "npm run format -w @pyorbit/web",
+    "format:check": "npm run format:check -w @pyorbit/web",
+    "content:validate": "npm run content:validate -w @pyorbit/web",
+    "check": "npm run content:validate && npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build"
   }
 }
