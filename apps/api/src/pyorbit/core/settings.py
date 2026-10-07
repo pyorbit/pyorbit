@@ -1,17 +1,27 @@
 from functools import lru_cache
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_prefix="PYORBIT_", env_file=("../../.env", ".env"), extra="ignore"
+        env_prefix="PYORBIT_", 
+        env_file=("../../.env", ".env"), 
+        extra="ignore",
     )
 
     environment: str = "development"
     database_url: str = "postgresql+psycopg://pyorbit:pyorbit@localhost:5432/pyorbit"
     cors_origins: list[str] = ["http://localhost:3000"]
     log_level: str = "INFO"
+
+    session_cookie_secure: bool = True
+    session_ttl_seconds: int = Field(
+        default=86400,
+        ge=300,
+        le=2592000,
+    )
 
 
 @lru_cache
