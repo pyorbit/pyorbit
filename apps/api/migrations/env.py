@@ -3,9 +3,9 @@ from sqlalchemy import engine_from_config, pool
 
 from pyorbit.core.settings import get_settings
 from pyorbit.db.base import Base
+from pyorbit.models.auth_session import AuthSession  # noqa: F401
 from pyorbit.models.progress import LessonProgress  # noqa: F401
 from pyorbit.models.user import User  # noqa: F401
-from pyorbit.models.auth_session import AuthSession # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", get_settings().database_url.replace("%", "%%"))

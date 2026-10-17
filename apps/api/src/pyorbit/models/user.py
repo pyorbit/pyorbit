@@ -14,8 +14,9 @@ class User(UuidMixin, TimestampMixin, Base):
     )
 
     __table_args__ = (
-        Index("ix_users_email_normalized",
-              func.lower(email),
-              unique=True,
-              ),
+        Index(
+            "ix_users_email_normalized",
+            func.lower(email),
+            unique=True,
+        ),
     )
