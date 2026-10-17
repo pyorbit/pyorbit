@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
-import matter from "gray-matter";
+import { parse as parseYaml } from "yaml";
+import { parseFrontmatter } from "./frontmatter";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
 import { courseSchema, lessonSchema, type Course, type Lesson } from "@pyorbit/types";
@@ -28,7 +29,7 @@ export function validateMarkdown(body: string, file: string): void {
 
 function parseFile<T>(file: string, schema: z.ZodType<T>): T {
   const text = readFileSync(file, "utf8");
-  const parsed = file.endsWith(".md") ? matter(text).data : matter(`---\n${text}\n---`).data;
+  const parsed: unknown = file.endsWith(".md") ? parseFrontmatter(text).data : parseYaml(text);
   const result = schema.safeParse(parsed);
   if (!result.success) {
     throw new Error(`${path.relative(contentRoot, file)}: ${z.prettifyError(result.error)}`);
@@ -51,7 +52,7 @@ export function getCatalog(): CourseEntry[] {
         .map((entry) => {
           const file = path.join(courseDir, entry.name, "lesson.md");
           const lesson = parseFile(file, lessonSchema);
-          const body = matter(readFileSync(file, "utf8")).content.trim();
+          const body = parseFrontmatter(readFileSync(file, "utf8")).content;
           if (!body) throw new Error(`${file}: lesson body must not be empty`);
           if (entry.name !== `${String(lesson.order).padStart(2, "0")}-${lesson.slug}`) {
             throw new Error(`${file}: directory must match lesson order and slug`);
