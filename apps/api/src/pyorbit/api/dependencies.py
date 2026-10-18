@@ -21,7 +21,7 @@ AppSettings = Annotated[Settings, Depends(get_settings)]
 def require_csrf_protection(
 	request: Request,
 	settings: AppSettings,
-	csrf_token: Annotated[
+	csrf_header: Annotated[
 		str | None,
 		Header(alias="X-CSRF-Protection"),
 	] = None,
